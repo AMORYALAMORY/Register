@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>آلة حاسبة خارقة</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .calculator {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 
+                0 8px 32px rgba(0, 0, 0, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 400px;
+            width: 100%;
+            transition: transform 0.3s ease;
+        }
+
+        .calculator:hover {
+            transform: translateY(-5px);
+        }
+
+        .title {
+            text-align: center;
+            color: #fff;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .display {
+            background: rgba(0, 0, 0, 0.3);
+            color: #fff;
+            font-size: 2rem;
+            padding: 20px;
+            text-align: right;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .history {
+            color: rgba(255, 255, 255, 0.6);
+            font-size: 0.8rem;
+            position: absolute;
+            top: 5px;
+            right: 10px;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 20px;
+            font-size: 1.2rem;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-weight: bold;
+            position: relative;
+            overflow: hidden;
+            color: #fff;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn:before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s ease, height 0.3s ease;
+            z-index: 0;
+        }
+
+        .btn:hover:before {
+            width: 100%;
+            height: 100%;
+        }
+
+        .btn > * {
+            position: relative;
+            z-index: 1;
+        }
+
+        .btn-number {
+            background: linear-gradient(145deg, #4facfe, #00f2fe);
+            box-shadow: 
+                0 4px 15px rgba(79, 172, 254, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-number:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 6px 20px rgba(79, 172, 254, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-operator {
+            background: linear-gradient(145deg, #ff6b6b, #ee5a52);
+            box-shadow: 
+                0 4px 15px rgba(255, 107, 107, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-operator:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 6px 20px rgba(255, 107, 107, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-function {
+            background: linear-gradient(145deg, #a8e6cf, #88d8a3);
+            box-shadow: 
+                0 4px 15px rgba(168, 230, 207, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-function:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 6px 20px rgba(168, 230, 207, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-equals {
+            background: linear-gradient(145deg, #ffd93d, #ff6b35);
+            box-shadow: 
+                0 4px 15px rgba(255, 217, 61, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-equals:hover {
+            transform: translateY(-2px);
+            box-shadow: 
+                0 6px 20px rgba(255, 217, 61, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .btn-zero {
+            grid-column: span 2;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0);
+                opacity: 1;
+            }
+            100% {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        .ripple-effect {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.6);
+            transform: scale(0);
+            animation: ripple 0.6s linear;
+            pointer-events: none;
+        }
+
+        @media (max-width: 480px) {
+            .calculator {
+                padding: 20px;
+                margin: 10px;
+            }
+            
+            .display {
+                font-size: 1.5rem;
+                padding: 15px;
+                min-height: 60px;
+            }
+            
+            .btn {
+                padding: 15px;
+                font-size: 1rem;
+            }
+        }
+
+        .error {
+            color: #ff6b6b !important;
+            animation: shake 0.5s ease-in-out;
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator">
+        <h1 class="title">🧮 آلة حاسبة خارقة</h1>
+        <div class="display" id="display">
+            <div class="history" id="history"></div>
+            <div id="current">0</div>
+        </div>
+        <div class="buttons">
+            <button class="btn btn-function" onclick="clearAll()">AC</button>
+            <button class="btn btn-function" onclick="clearEntry()">CE</button>
+            <button class="btn btn-function" onclick="backspace()">⌫</button>
+            <button class="btn btn-operator" onclick="inputOperator('/')">÷</button>
+            
+            <button class="btn btn-number" onclick="inputNumber('7')">7</button>
+            <button class="btn btn-number" onclick="inputNumber('8')">8</button>
+            <button class="btn btn-number" onclick="inputNumber('9')">9</button>
+            <button class="btn btn-operator" onclick="inputOperator('*')">×</button>
+            
+            <button class="btn btn-number" onclick="inputNumber('4')">4</button>
+            <button class="btn btn-number" onclick="inputNumber('5')">5</button>
+            <button class="btn btn-number" onclick="inputNumber('6')">6</button>
+            <button class="btn btn-operator" onclick="inputOperator('-')">−</button>
+            
+            <button class="btn btn-number" onclick="inputNumber('1')">1</button>
+            <button class="btn btn-number" onclick="inputNumber('2')">2</button>
+            <button class="btn btn-number" onclick="inputNumber('3')">3</button>
+            <button class="btn btn-operator" onclick="inputOperator('+')">+</button>
+            
+            <button class="btn btn-number btn-zero" onclick="inputNumber('0')">0</button>
+            <button class="btn btn-number" onclick="inputNumber('.')">.</button>
+            <button class="btn btn-equals" onclick="calculate()">=</button>
+        </div>
+    </div>
+
+    <script>
+        let currentNumber = '0';
+        let previousNumber = '';
+        let operator = '';
+        let waitingForOperand = false;
+        let history = '';
+
+        const display = document.getElementById('current');
+        const historyDisplay = document.getElementById('history');
+
+        function updateDisplay() {
+            display.textContent = currentNumber;
+            historyDisplay.textContent = history;
+        }
+
+        function inputNumber(num) {
+            if (waitingForOperand) {
+                currentNumber = num;
+                waitingForOperand = false;
+            } else {
+                currentNumber = currentNumber === '0' ? num : currentNumber + num;
+            }
+            updateDisplay();
+            addRippleEffect(event);
+        }
+
+        function inputOperator(nextOperator) {
+            const inputValue = parseFloat(currentNumber);
+
+            if (previousNumber === '') {
+                previousNumber = inputValue;
+            } else if (operator) {
+                const currentValue = previousNumber || 0;
+                const newValue = performCalculation(currentValue, inputValue, operator);
+
+                currentNumber = String(newValue);
+                previousNumber = newValue;
+                updateDisplay();
+            }
+
+            waitingForOperand = true;
+            operator = nextOperator;
+            history = `${previousNumber} ${getOperatorSymbol(operator)}`;
+            updateDisplay();
+            addRippleEffect(event);
+        }
+
+        function performCalculation(firstOperand, secondOperand, operator) {
+            switch (operator) {
+                case '+':
+                    return firstOperand + secondOperand;
+                case '-':
+                    return firstOperand - secondOperand;
+                case '*':
+                    return firstOperand * secondOperand;
+                case '/':
+                    if (secondOperand === 0) {
+                        showError();
+                        return firstOperand;
+                    }
+                    return firstOperand / secondOperand;
+                default:
+                    return secondOperand;
+            }
+        }
+
+        function getOperatorSymbol(op) {
+            switch (op) {
+                case '+': return '+';
+                case '-': return '−';
+                case '*': return '×';
+                case '/': return '÷';
+                default: return op;
+            }
+        }
+
+        function calculate() {
+            const inputValue = parseFloat(currentNumber);
+
+            if (previousNumber !== '' && operator && !waitingForOperand) {
+                const newValue = performCalculation(previousNumber, inputValue, operator);
+                
+                history = `${previousNumber} ${getOperatorSymbol(operator)} ${inputValue} =`;
+                currentNumber = String(newValue);
+                previousNumber = '';
+                operator = '';
+                waitingForOperand = true;
+                updateDisplay();
+            }
+            addRippleEffect(event);
+        }
+
+        function clearAll() {
+            currentNumber = '0';
+            previousNumber = '';
+            operator = '';
+            waitingForOperand = false;
+            history = '';
+            display.classList.remove('error');
+            updateDisplay();
+            addRippleEffect(event);
+        }
+
+        function clearEntry() {
+            currentNumber = '0';
+            display.classList.remove('error');
+            updateDisplay();
+            addRippleEffect(event);
+        }
+
+        function backspace() {
+            if (currentNumber.length > 1) {
+                currentNumber = currentNumber.slice(0, -1);
+            } else {
+                currentNumber = '0';
+            }
+            display.classList.remove('error');
+            updateDisplay();
+            addRippleEffect(event);
+        }
+
+        function showError() {
+            display.classList.add('error');
+            setTimeout(() => {
+                display.classList.remove('error');
+            }, 1000);
+        }
+
+        function addRippleEffect(e) {
+            if (!e || !e.target) return;
+            
+            const button = e.target;
+            const rect = button.getBoundingClientRect();
+            const size = Math.max(rect.width, rect.height);
+            const x = e.clientX - rect.left - size / 2;
+            const y = e.clientY - rect.top - size / 2;
+            
+            const ripple = document.createElement('span');
+            ripple.classList.add('ripple-effect');
+            ripple.style.width = ripple.style.height = size + 'px';
+            ripple.style.left = x + 'px';
+            ripple.style.top = y + 'px';
+            
+            button.appendChild(ripple);
+            
+            setTimeout(() => {
+                ripple.remove();
+            }, 600);
+        }
+
+        // إضافة دعم لوحة المفاتيح
+        document.addEventListener('keydown', function(e) {
+            const key = e.key;
+            
+            if (key >= '0' && key <= '9' || key === '.') {
+                inputNumber(key);
+            } else if (key === '+' || key === '-' || key === '*' || key === '/') {
+                inputOperator(key);
+            } else if (key === 'Enter' || key === '=') {
+                e.preventDefault();
+                calculate();
+            } else if (key === 'Escape') {
+                clearAll();
+            } else if (key === 'Backspace') {
+                backspace();
+            } else if (key === 'Delete') {
+                clearEntry();
+            }
+        });
+
+        // تهيئة العرض
+        updateDisplay();
+    </script>
+</body>
+</html>
